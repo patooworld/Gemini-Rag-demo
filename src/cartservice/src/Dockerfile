@@ -13,15 +13,16 @@
 # limitations under the License.
 
 # https://mcr.microsoft.com/product/dotnet/sdk
-FROM mcr.microsoft.com/dotnet/sdk:8.0.302-noble@sha256:fa69db4553830bd5c28d701867796bf5939988c74d70284774c628a8a4361442 as builder
+FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0.302-noble@sha256:fa69db4553830bd5c28d701867796bf5939988c74d70284774c628a8a4361442 as builder
+ARG TARGETARCH
 WORKDIR /app
 COPY cartservice.csproj .
 RUN dotnet restore cartservice.csproj \
-    -r linux-x64
+    -a $TARGETARCH
 COPY . .
 RUN dotnet publish cartservice.csproj \
     -p:PublishSingleFile=true \
-    -r linux-x64 \
+    -a $TARGETARCH \
     --self-contained true \
     -p:PublishTrimmed=true \
     -p:TrimMode=full \
